@@ -22,6 +22,7 @@ class Update_Game():
     def draw_surfaces(self):
         for s in self.surfaces:
             win.blit(s.surf1, s.rect)
+    #def update_sprite_pos():
     def update(self):
         win.fill(self.win_rgb)
         self.draw_surfaces()
