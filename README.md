@@ -1,3 +1,3 @@
 # asteroids-type-game
 
-Practicing Python by creating an Asteroids type game in pygame.
+Practicing Python by creating an Asteroids type game using pygame.
