@@ -20,6 +20,10 @@ class Player(pygame.sprite.Sprite):
         self.top_bott_pos = [self.rect.top, self.rect.bottom]
         self.rotation_angle = 0
         self.rotation_speed = 5
+        self.move_speed_x = 0 
+        self.move_speed_y = 0
+        self.x = 0
+        self.y = 0
 
     def rotate(self, direction):
         if direction == "right":
@@ -34,31 +38,29 @@ class Player(pygame.sprite.Sprite):
         self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
         self.mask = pygame.mask.from_surface(self.surf1)
         self.rect = self.surf1.get_rect(center = (self.center_position[0], self.center_position[1])) 
-        
+    
+    def out_of_bounds(self):
+        if self.rect.right > self.screen_width:
+            self.rect.move_ip(-self.screen_height, 0)
+        if self.rect.left < 0:
+            self.rect.move_ip(self.screen_height, 0)
+        if self.rect.top < 0:
+            self.rect.move_ip(0, self.screen_height)
+        if self.rect.bottom > self.screen_height:
+            self.rect.move_ip(0, -self.screen_height) 
 
     def update_position(self, pressed_key):
-        x = math.sin(self.rotation_angle*math.pi/180)
-        y = math.cos(self.rotation_angle*math.pi/180)
+        self.out_of_bounds()
+        self.rect.move_ip(-self.move_speed_x,-self.move_speed_y)
+        self.center_position = [self.rect.centerx, self.rect.centery] #update position after moving
         #x = direction_angles.sin_angle[self.rotation_angle] #need to account for negative angles
         #y = direction_angles.cos_angle[self.rotation_angle]
         if pressed_key[K_RIGHT]:
             self.rotate("right")
         elif pressed_key[K_LEFT]:
             self.rotate("left")
-            # if self.rect.left > 0:
-            #     self.rect.move_ip(-10, 0)
-            # else:
-            #     self.rect.move_ip(self.screen_height, 0)
         elif pressed_key[K_UP]:
-            self.rect.move_ip(-10*x, -10*y)
-            # if self.rect.top > 0:
-            #   self.rect.move_ip(0, -10) 
-            # else:
-            #     self.rect.move_ip(0, self.screen_height)
-        elif pressed_key[K_DOWN]:
-            self.rect.move_ip(1,1)
-            # if self.rect.bottom < (self.screen_height):
-            #     self.rect.move_ip(0, 10)
-            # else:
-            #     self.rect.move_ip(0, -self.screen_height)
-        self.center_position = [self.rect.centerx, self.rect.centery] #update position after moving
+            self.x = math.sin(self.rotation_angle*math.pi/180)
+            self.y = math.cos(self.rotation_angle*math.pi/180)
+            self.move_speed_x += 0.2*self.x
+            self.move_speed_y += 0.2*self.y
