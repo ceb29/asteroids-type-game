@@ -31,7 +31,6 @@ class Update_Game():
 
 def main():
     running = True
-    clock = pygame.time.Clock()
     s1 = sprite_classes.Player(width, height)
     all_s = pygame.sprite.Group()
     all_s.add(s1)
