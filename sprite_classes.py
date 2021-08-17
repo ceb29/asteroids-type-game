@@ -1,6 +1,6 @@
-from asteroids import COLOR_WHITE
 import pygame
 import math
+import random
 #need to account for negative angle
 #just use sin(-x) = -sin(x), cos(-x) = cos (x)
 #import direction_angles 
@@ -102,7 +102,7 @@ class Projectile(pygame.sprite.Sprite):
         self.y = center_position[1] - 30 * player_y
         self.rect = self.surf1.get_rect(center = (self.x, self.y)) 
         self.orientation_flag = 0
-        self.p_speed = 15
+        self.p_speed = 10
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.travel_distance = 0
@@ -125,9 +125,52 @@ class Projectile(pygame.sprite.Sprite):
         #keep updating position until out of bounds
         self.out_of_bounds()
         if self.travel_distance < self.screen_width:
-            self.move_speed_x = -10*self.player_x #negative value moves in positive x direction
-            self.move_speed_y = -10*self.player_y
+            self.move_speed_x = -self.p_speed*self.player_x #negative value moves in positive x direction
+            self.move_speed_y = -self.p_speed*self.player_y
             self.rect.move_ip(self.move_speed_x, self.move_speed_y)
             self.travel_distance += self.p_speed
         else:
             self.kill()
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, screen_width, screen_height):
+        super(Enemy, self).__init__()
+        self.surf1 = pygame.image.load("A1.png").convert()
+        self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
+        self.mask = pygame.mask.from_surface(self.surf1)
+        self.flag1 = random.randint(0, 3) 
+        self.random_speed = random.randint(1, 2)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        random_place = random.randint(1, 4)  #random starting place on outskirts of play area
+        if random_place == 1:
+            self.rect = self.surf1.get_rect(center = (random.randint(0, 494), random.randint(1, 5)))
+        elif random_place == 2:
+            self.rect = self.surf1.get_rect(center = (random.randint(1, 5), random.randint(0, 440)))
+        elif random_place == 3:
+            self.rect = self.surf1.get_rect(center = (random.randint(0, 499), random.randint(435, 440)))
+        elif random_place == 4:
+            self.rect = self.surf1.get_rect(center = (random.randint(439, 494), random.randint(0, 440)))
+
+    def out_of_bounds(self):
+        if self.rect.right > self.screen_width:
+            self.rect.move_ip(-self.screen_height, 0)
+        if self.rect.left < 0:
+            self.rect.move_ip(self.screen_height, 0)
+        if self.rect.top < 0:
+            self.rect.move_ip(0, self.screen_height)
+        if self.rect.bottom > self.screen_height:
+            self.rect.move_ip(0, -self.screen_height)
+
+    def update(self): 
+        #change position on wall bounces
+        #commented portions could be added to increase speed on every wall bounce
+        if self.flag1 == 0:
+            self.rect.move_ip(self.random_speed , self.random_speed)
+        elif self.flag1 == 1:
+            self.rect.move_ip(self.random_speed , -self.random_speed)
+        elif self.flag1 == 2:
+            self.rect.move_ip(-self.random_speed , -self.random_speed)
+        elif self.flag1 == 3:
+            self.rect.move_ip(-self.random_speed , self.random_speed)
+        self.out_of_bounds()
