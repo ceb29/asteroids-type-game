@@ -1,7 +1,5 @@
 #latest change added only 2 enemies on collision, fixed creation_type else statement of enemies, and changed range of enemy speed to three
-
 #Asteroid type game made in python using pygame
-#need to fix shooting while game over
 import pygame
 import sprite_classes
 from game_class import Game, width, height
