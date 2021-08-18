@@ -93,3 +93,5 @@ class Game():
         self.player1.kill()
         for en in self.enemies:
             en.kill()
+        for proj in self.projects:
+            proj.kill()
