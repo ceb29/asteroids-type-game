@@ -134,31 +134,45 @@ class Projectile(pygame.sprite.Sprite):
             self.kill()
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height):
+    def __init__(self, screen_width, screen_height, creation_flag, creation_type, center):
         super(Enemy, self).__init__()
-        self.asteroid_type = random.randint(1,8)
-        self.surf1 = pygame.image.load(sprite_dict.asteroid_sprites[self.asteroid_type]).convert()
-        self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
-        self.mask = pygame.mask.from_surface(self.surf1)
         self.flag1 = random.randint(0, 3) 
         self.random_speed = random.randint(1, 2)
         self.screen_width = screen_width
         self.screen_height = screen_height
-        random_place = random.randint(1, 4)  #random starting place on outskirts of play area
-        if random_place == 1:
-            self.rect = self.surf1.get_rect(center = (random.randint(0, self.screen_width), 0))
-        elif random_place == 2:
-            self.rect = self.surf1.get_rect(center = (0, random.randint(0, self.screen_height)))
-        elif random_place == 3:
-            self.rect = self.surf1.get_rect(center = (random.randint(0, self.screen_width), self.screen_height))
-        elif random_place == 4:
-            self.rect = self.surf1.get_rect(center = (self.screen_width, random.randint(0, self.screen_height)))
+        self.center = center
+        if creation_flag == 0:
+            self.asteroid_type = random.randint(1, 8)
+            self.surf1 = pygame.image.load(sprite_dict.asteroid_sprites[self.asteroid_type]).convert()
+            self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
+            self.mask = pygame.mask.from_surface(self.surf1)
+            random_place = random.randint(1, 4)  #random starting place on outskirts of play area
+            if random_place == 1:
+                self.rect = self.surf1.get_rect(center = (random.randint(0, self.screen_width), 0))
+            elif random_place == 2:
+                self.rect = self.surf1.get_rect(center = (0, random.randint(0, self.screen_height)))
+            elif random_place == 3:
+                self.rect = self.surf1.get_rect(center = (random.randint(0, self.screen_width), self.screen_height))
+            elif random_place == 4:
+                self.rect = self.surf1.get_rect(center = (self.screen_width, random.randint(0, self.screen_height)))
+        else:
+            self.asteroid_type = random.randint(1, creation_type)
+            self.surf1 = pygame.image.load(sprite_dict.asteroid_sprites[self.asteroid_type]).convert()
+            self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
+            self.mask = pygame.mask.from_surface(self.surf1)
+            self.rect = self.surf1.get_rect(center = (self.center))
+    
+    def get_center(self):
+        return self.center
+
+    def get_creation_type(self):
+        return self.asteroid_type
 
     def out_of_bounds(self):
         if self.rect.right > self.screen_width:
-            self.rect.move_ip(-self.screen_height, 0)
+            self.rect.move_ip(-self.screen_width, 0)
         if self.rect.left < 0:
-            self.rect.move_ip(self.screen_height, 0)
+            self.rect.move_ip(self.screen_width, 0)
         if self.rect.top < 0:
             self.rect.move_ip(0, self.screen_height)
         if self.rect.bottom > self.screen_height:
@@ -176,3 +190,4 @@ class Enemy(pygame.sprite.Sprite):
         elif self.flag1 == 3:
             self.rect.move_ip(-self.random_speed , self.random_speed)
         self.out_of_bounds()
+        self.center = [self.rect.centerx, self.rect.centery]

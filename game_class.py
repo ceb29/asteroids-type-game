@@ -28,7 +28,8 @@ class Game():
             self.win.blit(s.surf1, s.rect)
     
     def update_sprite_pos(self):
-        self.en_plr_collisions()
+        if self.en_plr_collisions() == 1:
+            self.remove_sprites()
         self.en_pro_collisions()
         pressed_key = pygame.key.get_pressed()
         self.player1.update_position(pressed_key)
@@ -47,24 +48,36 @@ class Game():
         self.surfaces.add(p1)
         self.projects.add(p1)
 
-    def add_sprites(self):
-        self.surfaces.add(self.player1)
+    def add_enemies(self, creation_flag, creation_type, center):
         for en in self.enemie_list:
-            en = sprite_classes.Enemy(width, height)
+            en = sprite_classes.Enemy(width, height, creation_flag, creation_type, center)
             self.enemies.add(en)
             self.surfaces.add(en)
+    
+    def add_sprites(self):
+        self.surfaces.add(self.player1)
+        self.add_enemies(0, 0, [0,0])
 
     def make_enemie_list(self):
         self.enemie_list = []
         for i in range(self.num_enemies):
-            en = sprite_classes.Enemy(width, height)
+            en = sprite_classes.Enemy(width, height, 0, 0, [0, 0])
             self.enemie_list.append(en)
+
+    def enemy_multiply(self, creation_type, center):
+        if creation_type > 2:
+            self.num_enemies = 4
+            self.make_enemie_list()
+            self.add_enemies(1, creation_type, center)
 
     def en_pro_collisions(self):
         #check for projectile and enemy collision
         for en in self.enemies:
-            if pygame.sprite.spritecollideany(en, self.projects):
+            x = pygame.sprite.spritecollideany(en, self.projects)
+            if x != None:
+                x.kill()
                 en.kill()
+                self.enemy_multiply(en.get_creation_type(), en.get_center())
                 #return 1
         #return 0
 
@@ -72,6 +85,11 @@ class Game():
         #check for player collisions
         for en in self.enemies:
             if pygame.sprite.spritecollideany(self.player1, self.enemies, collided=pygame.sprite.collide_mask):
-                en.kill()
-                #return 1
-        #return 0
+                return 1
+        return 0
+
+    def remove_sprites(self):
+    #clean up sprites on game over
+        self.player1.kill()
+        for en in self.enemies:
+            en.kill()
