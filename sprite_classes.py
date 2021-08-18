@@ -139,10 +139,11 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height, creation_flag, creation_type, center):
         super(Enemy, self).__init__()
         self.flag1 = random.randint(0, 3) 
-        self.random_speed = random.randint(1, 2)
+        self.random_speed = random.randint(1, 3)
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.center = center
+        self.asteroid_type = 0
         if creation_flag == 0:
             self.asteroid_type = random.randint(1, 8)
             self.surf1 = pygame.image.load(sprite_dict.asteroid_sprites[self.asteroid_type]).convert()
@@ -158,7 +159,10 @@ class Enemy(pygame.sprite.Sprite):
             elif random_place == 4:
                 self.rect = self.surf1.get_rect(center = (self.screen_width, random.randint(0, self.screen_height)))
         else:
-            self.asteroid_type = random.randint(1, creation_type)
+            if self.asteroid_type % 2 != 0:
+                self.asteroid_type = creation_type - 1 #changed this, added -1
+            else:
+                self.asteroid_type = creation_type - 2
             self.surf1 = pygame.image.load(sprite_dict.asteroid_sprites[self.asteroid_type]).convert()
             self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
             self.mask = pygame.mask.from_surface(self.surf1)

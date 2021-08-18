@@ -1,3 +1,5 @@
+#latest change added only 2 enemies on collision, fixed creation_type else statement of enemies, and changed range of enemy speed to three
+
 #Asteroid type game made in python using pygame
 #need to fix shooting while game over
 import pygame
@@ -11,19 +13,22 @@ color_white = (255, 255, 255)
 
 pygame.init()
 win = pygame.display.set_mode((width, height)) #creates a game window with given size 
-font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
+#font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
 
 def main():
     running = True    
     game = Game(30, color_black, win)
     game.start()
+    
     while running:
         for event in pygame.event.get():
             if event.type == KEYDOWN: #exit game if esc key pressed
                 if event.key == K_ESCAPE: 
                     running = False
-                if event.key == K_SPACE:
-                    game.create_projectile()
+                if event.key == K_SPACE and game.get_status() == 0:
+                        game.create_projectile()
+                if event.key == K_RETURN and game.get_status() == 1:
+                        game.restart(0)
             elif event.type == pygame.QUIT:
                 running = False
         game.update()
