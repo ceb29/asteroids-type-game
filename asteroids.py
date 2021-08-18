@@ -1,5 +1,5 @@
 #Asteroid type game made in python using pygame
-#need to fix multiple input actions
+#need to fix shooting while game over
 import pygame
 import sprite_classes
 from game_class import Game, width, height

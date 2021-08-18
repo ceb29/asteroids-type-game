@@ -7,7 +7,9 @@ import sprite_dict
 #import direction_angles 
 #need to make a parent class with rotate and out of bounds
 from pygame.constants import RLEACCEL, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_SPACE
-
+#
+#need to fix projectile speed to match player
+#
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 
@@ -47,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         else:
             rotation = self.rotation_speed
         self.rotation_angle += rotation
-        if self.rotation_angle > 360 or self.rotation_angle < -360:
+        if self.rotation_angle >= 360 or self.rotation_angle <= -360:
             self.rotation_angle = 0
         self.surf1 = pygame.image.load(sprite_dict.player_sprites[1]).convert()
         self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
@@ -57,9 +59,9 @@ class Player(pygame.sprite.Sprite):
     
     def out_of_bounds(self):
         if self.rect.right > self.screen_width:
-            self.rect.move_ip(-self.screen_height, 0)
+            self.rect.move_ip(-self.screen_width, 0)
         if self.rect.left < 0:
-            self.rect.move_ip(self.screen_height, 0)
+            self.rect.move_ip(self.screen_width, 0)
         if self.rect.top < 0:
             self.rect.move_ip(0, self.screen_height)
         if self.rect.bottom > self.screen_height:
