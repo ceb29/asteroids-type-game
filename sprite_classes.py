@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
         self.rotation_angle += rotation
         if self.rotation_angle > 360 or self.rotation_angle < -360:
             self.rotation_angle = 0
-        self.surf1 = pygame.image.load("player_sprite1.png").convert()
+        self.surf1 = pygame.image.load("sprite_images/player_sprite1.png").convert()
         self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
         self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
         self.mask = pygame.mask.from_surface(self.surf1)
@@ -72,11 +72,11 @@ class Player(pygame.sprite.Sprite):
         if pressed_key [K_UP]:
             self.move_speed_x += 0.2*self.x
             self.move_speed_y += 0.2*self.y
-            self.surf1 = pygame.image.load("player_sprite2.png").convert()
+            self.surf1 = pygame.image.load("sprite_images/player_sprite2.png").convert()
             self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
             self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
         else:
-            self.surf1 = pygame.image.load("player_sprite1.png").convert()
+            self.surf1 = pygame.image.load("sprite_images/player_sprite1.png").convert()
             self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
             self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
 
@@ -144,13 +144,13 @@ class Enemy(pygame.sprite.Sprite):
         self.screen_height = screen_height
         random_place = random.randint(1, 4)  #random starting place on outskirts of play area
         if random_place == 1:
-            self.rect = self.surf1.get_rect(center = (random.randint(0, 494), random.randint(1, 5)))
+            self.rect = self.surf1.get_rect(center = (random.randint(0, self.screen_width), 0))
         elif random_place == 2:
-            self.rect = self.surf1.get_rect(center = (random.randint(1, 5), random.randint(0, 440)))
+            self.rect = self.surf1.get_rect(center = (0, random.randint(0, self.screen_height)))
         elif random_place == 3:
-            self.rect = self.surf1.get_rect(center = (random.randint(0, 499), random.randint(435, 440)))
+            self.rect = self.surf1.get_rect(center = (random.randint(0, self.screen_width), self.screen_height))
         elif random_place == 4:
-            self.rect = self.surf1.get_rect(center = (random.randint(439, 494), random.randint(0, 440)))
+            self.rect = self.surf1.get_rect(center = (self.screen_width, random.randint(0, self.screen_height)))
 
     def out_of_bounds(self):
         if self.rect.right > self.screen_width:
