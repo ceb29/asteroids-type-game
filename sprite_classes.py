@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+import sprite_dict
 #need to account for negative angle
 #just use sin(-x) = -sin(x), cos(-x) = cos (x)
 #import direction_angles 
@@ -13,7 +14,7 @@ COLOR_WHITE = (255, 255, 255)
 class Player(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height):
         super(Player, self).__init__()
-        self.surf1 = pygame.image.load("player_sprite1.png").convert()
+        self.surf1 = pygame.image.load(sprite_dict.player_sprites[1]).convert()
         self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
         self.mask = pygame.mask.from_surface(self.surf1)
         self.rect = self.surf1.get_rect(center = (screen_width/2,screen_height/2))
@@ -48,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         self.rotation_angle += rotation
         if self.rotation_angle > 360 or self.rotation_angle < -360:
             self.rotation_angle = 0
-        self.surf1 = pygame.image.load("sprite_images/player_sprite1.png").convert()
+        self.surf1 = pygame.image.load(sprite_dict.player_sprites[1]).convert()
         self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
         self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
         self.mask = pygame.mask.from_surface(self.surf1)
@@ -72,11 +73,11 @@ class Player(pygame.sprite.Sprite):
         if pressed_key [K_UP]:
             self.move_speed_x += 0.2*self.x
             self.move_speed_y += 0.2*self.y
-            self.surf1 = pygame.image.load("sprite_images/player_sprite2.png").convert()
+            self.surf1 = pygame.image.load(sprite_dict.player_sprites[2]).convert()
             self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
             self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
         else:
-            self.surf1 = pygame.image.load("sprite_images/player_sprite1.png").convert()
+            self.surf1 = pygame.image.load(sprite_dict.player_sprites[1]).convert()
             self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
             self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
 
@@ -112,9 +113,9 @@ class Projectile(pygame.sprite.Sprite):
 
     def out_of_bounds(self):
         if self.rect.right > self.screen_width:
-            self.rect.move_ip(-self.screen_height, 0)
+            self.rect.move_ip(-self.screen_width, 0)
         if self.rect.left < 0:
-            self.rect.move_ip(self.screen_height, 0)
+            self.rect.move_ip(self.screen_width, 0)
         if self.rect.top < 0:
             self.rect.move_ip(0, self.screen_height)
         if self.rect.bottom > self.screen_height:
@@ -135,7 +136,8 @@ class Projectile(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height):
         super(Enemy, self).__init__()
-        self.surf1 = pygame.image.load("A1.png").convert()
+        self.asteroid_type = random.randint(1,8)
+        self.surf1 = pygame.image.load(sprite_dict.asteroid_sprites[self.asteroid_type]).convert()
         self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
         self.mask = pygame.mask.from_surface(self.surf1)
         self.flag1 = random.randint(0, 3) 
