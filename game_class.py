@@ -142,6 +142,7 @@ class Game(Game_Text):
         for en in self.enemies:
             if pygame.sprite.spritecollideany(self.player1, self.enemies, collided=pygame.sprite.collide_mask):
                 self.game_status = 1
+                self.score = 0
                 return 1
         return 0
 
