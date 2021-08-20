@@ -27,7 +27,7 @@ def main():
                     game.write_high_score()
                     running = False
                 if event.key == K_SPACE and game.get_status() == 0:
-                        game.create_projectile()
+                        game.add_projectile()
                         game.shoot_audio()
                 if event.key == K_RETURN and game.get_status() == 1:
                         game.restart()

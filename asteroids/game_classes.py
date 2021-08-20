@@ -137,29 +137,28 @@ class Game():
         for s in self.surfaces:
             self.win.blit(s.surf1, s.rect)
     
+    #update all sprite positions if 
     def update_sprite_pos(self):
-        if self.en_plr_collisions() == 1:
-            self.remove_sprites()
-        self.en_pro_collisions()
         pressed_key = pygame.key.get_pressed()
         self.player1.update_position(pressed_key)
         self.projects.update()
         self.enemies.update()
 
+    #main game function
     def update(self):
         self.win.fill(self.win_rgb)
         self.text.update_text(self.game_status)
         if self.game_status == 0:
             self.draw_surfaces()
             self.update_sprite_pos()
-            self.thrust_on_off()
+            self.check_for_collisions()
         else:
-            self.thrust_audio_pause()
-            self.thrust_flag = 0
+            self.remove_sprites()
         pygame.display.flip()
         self.clock.tick(60) 
     
-    def create_projectile(self):
+    #functions for creating sprites
+    def add_projectile(self):
         p1 = sprite_classes.Projectile(self.player1.get_center_position(), self.player1.get_x(), self.player1.get_y(), PLAYER_SIZE, width, height, self.player1.get_rotation_angle())
         self.surfaces.add(p1)
         self.projects.add(p1)
@@ -175,6 +174,7 @@ class Game():
         num_enemies = random.randint(1, self.enemie_count)
         self.add_enemies(0, 0, [0,0], num_enemies)
 
+    #check if there are no more enemies left
     def check_enemies(self):
         if len(self.enemies) == 0:
             self.enemie_count += 1
@@ -182,16 +182,12 @@ class Game():
 
     #functions for collisions between sprites       
     def en_plr_collisions(self):
-        #check for player collisions
         for en in self.enemies:
             if pygame.sprite.spritecollideany(self.player1, self.enemies, collided=pygame.sprite.collide_mask):
                 self.game_status = 1
                 self.text.set_score(0)
-                return 1
-        return 0
 
     def en_pro_collisions(self):
-        #check for projectile and enemy collision
         for en in self.enemies:
             x = pygame.sprite.spritecollideany(en, self.projects)
             if x != None:
@@ -201,8 +197,10 @@ class Game():
                 self.text.set_score(self.text.get_score() + 1)
         if self.game_status == 0: #don't wnat game to go to next level on game over screen
             self.check_enemies()
-                #return 1
-        #return 0
+
+    def check_for_collisions(self):
+        self.en_plr_collisions()
+        self.en_pro_collisions()
 
     #functions for cleaning up sprites
     def remove_enemies(self):
@@ -249,6 +247,21 @@ class Asteroids(Game):
             self.thrust_audio_pause()
             self.thrust_flag = 0
 
+    def update(self):
+        self.win.fill(self.win_rgb)
+        self.text.update_text(self.game_status)
+        if self.game_status == 0:
+            self.draw_surfaces()
+            self.update_sprite_pos()
+            self.thrust_on_off()
+            self.check_for_collisions()
+        else:
+            self.remove_sprites()
+            self.thrust_audio_pause()
+            self.thrust_flag = 0
+        pygame.display.flip()
+        self.clock.tick(60) 
+
     def enemy_multiply(self, creation_type, center):
         if creation_type > 2:
             num_enemies = 2 #could make random, a certain number for each size, or certain amount of size 
@@ -276,8 +289,6 @@ class Asteroids(Game):
                 self.game_status = 1
                 self.text.set_score(0)
                 self.thrust_flag = 0
-                return 1
-        return 0
     
     #functions for audio
     def shoot_audio(self):
