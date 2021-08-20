@@ -7,6 +7,7 @@ color_black= (0, 0, 0) #add file for colors
 color_white = (255, 255, 255)
 width, height = 1820, 980 #need to create file for constants
 
+
 class Game_Sounds:
     def __init__(self):
         self.sound_list = []
@@ -18,6 +19,12 @@ class Game_Sounds:
 
     def play_audio(self, sound_index):
         self.channel_list[sound_index].play(self.sound_list[sound_index])
+
+    def play_audio_loop(self, sound_index):
+        self.channel_list[sound_index].play(self.sound_list[sound_index], loops = -1)
+
+    def pause_audio(self, sound_index):
+        self.channel_list[sound_index].stop()
 
 class Game_Text():
     def __init__(self, win):
@@ -77,7 +84,8 @@ class Game():
         self.text = Game_Text(win)
         self.game_status = 0
         self.sounds = Game_Sounds()
-        self.sound_files = ["sound_files/shoot.wav", "sound_files/thrust.wav"] 
+        #sound_files/asteroids_shoot_t.wav"
+        self.sound_files = ["sound_files/shoot.wav", "sound_files/thrust.wav", "sound_files/asteroid.wav"] 
         self.player1 = sprite_classes.Player(width, height)
         self.projects = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
@@ -86,7 +94,7 @@ class Game():
         self.clock_speed = clock_speed
         self.win_rgb = rgb_tuple
         self.thrust_flag = 0
-        self.level = 2
+        self.enemie_count = 5
     
     def get_status(self):
         return self.game_status
@@ -102,7 +110,7 @@ class Game():
 
     def restart(self):
         self.player1 = sprite_classes.Player(width, height)
-        self.level = 1
+        self.enemie_count = 5
         self.add_sprites()
         self.game_status = 0
 
@@ -153,7 +161,7 @@ class Game():
 
     def add_sprites(self):
         self.surfaces.add(self.player1)
-        num_enemies = random.randint(1, self.level)
+        num_enemies = random.randint(1, self.enemie_count)
         self.add_enemies(0, 0, [0,0], num_enemies)
 
     def enemy_multiply(self, creation_type, center):
@@ -162,9 +170,8 @@ class Game():
             self.add_enemies(1, creation_type, center, num_enemies)
 
     def check_enemies(self):
-        print(len(self.enemies))
         if len(self.enemies) == 0:
-            self.level += 1
+            self.enemie_count += 1
             self.next_level()
 
     def en_pro_collisions(self):
@@ -176,6 +183,7 @@ class Game():
                 en.kill()
                 self.enemy_multiply(en.get_creation_type(), en.get_center())
                 self.text.score += 1
+                self.asteroid_audio()
         if self.game_status == 0: #don't wnat game to go to next level on game over screen
             self.check_enemies()
                 #return 1
@@ -214,11 +222,14 @@ class Game():
     def shoot_audio(self):
         self.sounds.play_audio(0)
     
+    def asteroid_audio(self):
+        self.sounds.play_audio(2)
+
     def thrust_audio(self):
-        self.sounds.play_audio(1)
+        self.sounds.play_audio_loop(1)
 
     def thrust_audio_pause(self):
-        self.sounds.channel_list[1].stop()
+        self.sounds.pause_audio(1)
 
 
 

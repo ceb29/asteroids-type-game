@@ -25,7 +25,8 @@ class Player(pygame.sprite.Sprite):
         self.center_position = [screen_width/2,screen_height/2]
         self.top_bott_pos = [self.rect.top, self.rect.bottom]
         self.rotation_angle = 0
-        self.rotation_speed = 5
+        self.rotation_speed_right = 1
+        self.rotation_speed_left = 1
         self.move_speed_x = 0 
         self.move_speed_y = 0
         self.x = 0
@@ -52,9 +53,9 @@ class Player(pygame.sprite.Sprite):
 
     def rotate(self, direction):
         if direction == "right":
-            rotation = -self.rotation_speed
+            rotation = -self.rotation_speed_right
         else:
-            rotation = self.rotation_speed
+            rotation = self.rotation_speed_left
         self.rotation_angle += rotation
         if self.rotation_angle >= 360 or self.rotation_angle <= -360:
             self.rotation_angle = 0
@@ -76,9 +77,17 @@ class Player(pygame.sprite.Sprite):
 
     def check_keys(self, pressed_key):
         if pressed_key[K_RIGHT]:
+            if self.rotation_speed_right < 7:
+                self.rotation_speed_right += 0.25
             self.rotate("right")
+        else:
+            self.rotation_speed_right = 1
         if pressed_key [K_LEFT]:
+            if self.rotation_speed_left < 7:
+                self.rotation_speed_left += 0.25
             self.rotate("left")
+        else:
+            self.rotation_speed_left = 1
         if pressed_key [K_UP]:
             self.move_speed_x += 0.2*self.x
             self.move_speed_y += 0.2*self.y
@@ -86,7 +95,6 @@ class Player(pygame.sprite.Sprite):
             self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
             self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
             self.thrust_val = 1
-
         else:
             self.surf1 = pygame.image.load(sprite_dict.player_sprites[1]).convert()
             self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)

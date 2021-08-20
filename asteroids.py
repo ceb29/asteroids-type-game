@@ -1,4 +1,4 @@
-#latest change added only 2 enemies on collision, fixed creation_type else statement of enemies, and changed range of enemy speed to three
+#need to figure out a way to fix audio pop on throttle with fade
 #Asteroid type game made in python using pygame
 import pygame
 import sprite_classes
@@ -11,6 +11,7 @@ color_white = (255, 255, 255)
 
 pygame.init()
 pygame.mixer.init()
+
 win = pygame.display.set_mode((width, height)) #creates a game window with given size 
 #font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
 
