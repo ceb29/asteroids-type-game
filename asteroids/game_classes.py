@@ -97,7 +97,7 @@ class Game():
         self.game_status = 0
         self.sounds = Game_Sounds()
         #sound_files/asteroids_shoot_t.wav"
-        self.sound_files = ["sound_files/shoot.wav", "sound_files/thrust.wav", "sound_files/asteroid.wav"] 
+        self.sound_files = ["asteroids/sound_files/shoot.wav", "asteroids/sound_files/thrust.wav", "asteroids/sound_files/asteroid.wav"] 
         self.player1 = sprite_classes.Player(width, height)
         self.projects = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
@@ -246,11 +246,11 @@ class Game():
 
     #functions for high score
     def read_high_score(self):
-        high_score_file = open('high_score.txt', "r")
+        high_score_file = open('asteroids/high_score.txt', "r")
         self.text.set_high_score(int(high_score_file.read()))
         high_score_file.close()
 
     def write_high_score(self):
-        high_score_file = open('high_score.txt', "w")
+        high_score_file = open('asteroids/high_score.txt', "w")
         high_score_file.write(str(self.text.get_high_score()))
         high_score_file.close()

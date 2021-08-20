@@ -2,7 +2,7 @@
 #Asteroid type game made in python using pygame
 import pygame
 import sprite_classes
-from game_class import Game, width, height
+from game_classes import Game, width, height
 #buttons used in game
 from pygame.constants import K_RETURN, RLEACCEL, K_ESCAPE, KEYDOWN, K_SPACE
 #create window and initialize
