@@ -7,25 +7,20 @@ color_black= (0, 0, 0) #add file for colors
 color_white = (255, 255, 255)
 width, height = 1820, 980 #need to create file for constants
 
-class Game_Music:
+class Game_Sounds:
     def __init__(self):
-        self.shoot_sound = pygame.mixer.Sound("sound_files/shoot.wav")
-        self.thrust_sound = pygame.mixer.Sound("sound_files/thrust.wav")
-        self.shoot_channel = pygame.mixer.Channel(2) #create channels to handle audio, so 1 channel can be paused at a time
-        self.thrust_channel = pygame.mixer.Channel(1)
+        self.sound_list = []
+        self.channel_list = []
+        
+    def add_channels(self, sound_file):
+        self.sound_list.append(pygame.mixer.Sound(sound_file))
+        self.channel_list.append(pygame.mixer.Channel(len(self.sound_list) - 1))
 
-    def shoot_audio(self):
-        self.shoot_channel.play(self.shoot_sound)
-    
-    def thrust_audio(self):
-        self.thrust_channel.play(self.thrust_sound, loops = -1)
+    def play_audio(self, sound_index):
+        self.channel_list[sound_index].play(self.sound_list[sound_index])
 
-    def thrust_audio_pause(self):
-        self.thrust_channel.stop()
-
-class Game_Level(Game_Music):
+class Game_Text():
     def __init__(self, win):
-        Game_Music.__init__(self)
         self.text_list = []
         self.font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
         self.win = win
@@ -38,7 +33,7 @@ class Game_Level(Game_Music):
         self.high_score_padding = 200
         self.score_pad_num = 10
         self.high_score_pad_num = 10
-        self.level = 2
+        
 
     def get_status(self):
         return self.game_status
@@ -81,9 +76,11 @@ class Game_Level(Game_Music):
             self.win.blit(self.text_list[2], (5, height - 40)) #text_high_score
             self.win.blit(self.text_list[4], (self.high_score_padding, height - 40))  #high_score
 
-class Game(Game_Level):
+class Game(Game_Text):
     def __init__(self, clock_speed, rgb_tuple, win):
-        Game_Level.__init__(self, win)
+        Game_Text.__init__(self, win)
+        self.sounds = Game_Sounds()
+        self.sound_files = ["sound_files/shoot.wav", "sound_files/thrust.wav"] 
         self.player1 = sprite_classes.Player(width, height)
         self.projects = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
@@ -92,7 +89,13 @@ class Game(Game_Level):
         self.clock_speed = clock_speed
         self.win_rgb = rgb_tuple
         self.thrust_flag = 0
+        self.level = 2
     
+    def start(self):
+        self.create_sounds()
+        self.create_text()
+        self.add_sprites()
+
     def next_level(self):
         self.surfaces = pygame.sprite.Group()
         self.add_sprites()
@@ -100,12 +103,8 @@ class Game(Game_Level):
     def restart(self):
         self.player1 = sprite_classes.Player(width, height)
         self.level = 1
-        self.start()
-        self.game_status = 0
-
-    def start(self):
-        self.create_text()
         self.add_sprites()
+        self.game_status = 0
 
     def draw_surfaces(self):
         for s in self.surfaces:
@@ -199,13 +198,27 @@ class Game(Game_Level):
     def remove_projectiles(self):
         for proj in self.projects:
             proj.kill()
-
+    
     def remove_sprites(self):
     #clean up sprites on game over
         self.player1.kill()
         self.remove_enemies()
         self.remove_projectiles()
         self.surfaces = pygame.sprite.Group()
+
+    #functions for audio
+    def create_sounds(self):
+        for file in self.sound_files:
+            self.sounds.add_channels(file)
+            
+    def shoot_audio(self):
+        self.sounds.play_audio(0)
+    
+    def thrust_audio(self):
+        self.sounds.play_audio(1)
+
+    def thrust_audio_pause(self):
+        self.sounds.channel_list[1].stop()
 
 
 
