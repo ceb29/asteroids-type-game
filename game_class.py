@@ -1,4 +1,5 @@
 import pygame
+import random
 import sprite_classes
 
 PLAYER_SIZE = 25
@@ -6,8 +7,25 @@ color_black= (0, 0, 0) #add file for colors
 color_white = (255, 255, 255)
 width, height = 1820, 980 #need to create file for constants
 
-class Game_Text():
-    def _init_(self, win):
+class Game_Music:
+    def __init__(self):
+        self.shoot_sound = pygame.mixer.Sound("sound_files/shoot.wav")
+        self.thrust_sound = pygame.mixer.Sound("sound_files/thrust.wav")
+        self.shoot_channel = pygame.mixer.Channel(2) #create channels to handle audio, so 1 channel can be paused at a time
+        self.thrust_channel = pygame.mixer.Channel(1)
+
+    def shoot_audio(self):
+        self.shoot_channel.play(self.shoot_sound)
+    
+    def thrust_audio(self):
+        self.thrust_channel.play(self.thrust_sound, loops = -1)
+
+    def thrust_audio_pause(self):
+        self.thrust_channel.stop()
+
+class Game_Level(Game_Music):
+    def __init__(self, win):
+        Game_Music.__init__(self)
         self.text_list = []
         self.font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
         self.win = win
@@ -20,6 +38,7 @@ class Game_Text():
         self.high_score_padding = 200
         self.score_pad_num = 10
         self.high_score_pad_num = 10
+        self.level = 2
 
     def get_status(self):
         return self.game_status
@@ -62,9 +81,9 @@ class Game_Text():
             self.win.blit(self.text_list[2], (5, height - 40)) #text_high_score
             self.win.blit(self.text_list[4], (self.high_score_padding, height - 40))  #high_score
 
-class Game(Game_Text):
+class Game(Game_Level):
     def __init__(self, clock_speed, rgb_tuple, win):
-        Game_Text._init_(self, win)
+        Game_Level.__init__(self, win)
         self.player1 = sprite_classes.Player(width, height)
         self.projects = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
@@ -72,13 +91,17 @@ class Game(Game_Text):
         self.clock = pygame.time.Clock()
         self.clock_speed = clock_speed
         self.win_rgb = rgb_tuple
-        self.num_enemies = 5
+        self.thrust_flag = 0
     
-    def restart(self, status):
-        if self.game_status == 1:
-            self.player1 = sprite_classes.Player(width, height)
-            self.start()
-            self.game_status = status
+    def next_level(self):
+        self.surfaces = pygame.sprite.Group()
+        self.add_sprites()
+
+    def restart(self):
+        self.player1 = sprite_classes.Player(width, height)
+        self.level = 1
+        self.start()
+        self.game_status = 0
 
     def start(self):
         self.create_text()
@@ -97,11 +120,24 @@ class Game(Game_Text):
         self.projects.update()
         self.enemies.update()
 
+    def thrust_on_off(self):
+        if self.player1.get_thrust_val() == 1 and self.thrust_flag == 0:
+            self.thrust_audio()
+            self.thrust_flag = 1
+        elif self.player1.get_thrust_val() == 0 and self.thrust_flag == 1:
+            self.thrust_audio_pause()
+            self.thrust_flag = 0
+
     def update(self):
         self.win.fill(self.win_rgb)
-        self.draw_surfaces()
-        self.update_sprite_pos()
         self.update_text()
+        if self.game_status == 0:
+            self.draw_surfaces()
+            self.update_sprite_pos()
+            self.thrust_on_off()
+        else:
+            self.thrust_audio_pause()
+            self.thrust_flag = 0
         pygame.display.flip()
         self.clock.tick(60) 
 
@@ -110,20 +146,27 @@ class Game(Game_Text):
         self.surfaces.add(p1)
         self.projects.add(p1)
 
-    def add_enemies(self, creation_flag, creation_type, center):
-        for i in range(self.num_enemies):
+    def add_enemies(self, creation_flag, creation_type, center, num_enemies):
+        for i in range(num_enemies):
             en = sprite_classes.Enemy(width, height, creation_flag, creation_type, center)
             self.enemies.add(en)
             self.surfaces.add(en)
-    
+
     def add_sprites(self):
         self.surfaces.add(self.player1)
-        self.add_enemies(0, 0, [0,0])
+        num_enemies = random.randint(1, self.level)
+        self.add_enemies(0, 0, [0,0], num_enemies)
 
     def enemy_multiply(self, creation_type, center):
         if creation_type > 2:
-            self.num_enemies = 2 #could make random, a certain number for each size, or certain amount of size 
-            self.add_enemies(1, creation_type, center)
+            num_enemies = 2 #could make random, a certain number for each size, or certain amount of size 
+            self.add_enemies(1, creation_type, center, num_enemies)
+
+    def check_enemies(self):
+        print(len(self.enemies))
+        if len(self.enemies) == 0:
+            self.level += 1
+            self.next_level()
 
     def en_pro_collisions(self):
         #check for projectile and enemy collision
@@ -134,6 +177,8 @@ class Game(Game_Text):
                 en.kill()
                 self.enemy_multiply(en.get_creation_type(), en.get_center())
                 self.score += 1
+        if self.game_status == 0: #don't wnat game to go to next level on game over screen
+            self.check_enemies()
                 #return 1
         #return 0
 
@@ -143,17 +188,25 @@ class Game(Game_Text):
             if pygame.sprite.spritecollideany(self.player1, self.enemies, collided=pygame.sprite.collide_mask):
                 self.game_status = 1
                 self.score = 0
+                self.thrust_flag = 0
                 return 1
         return 0
+    
+    def remove_enemies(self):
+        for en in self.enemies:
+            en.kill()
+
+    def remove_projectiles(self):
+        for proj in self.projects:
+            proj.kill()
 
     def remove_sprites(self):
     #clean up sprites on game over
         self.player1.kill()
-        for en in self.enemies:
-            en.kill()
-        for proj in self.projects:
-            proj.kill()
+        self.remove_enemies()
+        self.remove_projectiles()
         self.surfaces = pygame.sprite.Group()
+
 
 
 

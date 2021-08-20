@@ -10,6 +10,7 @@ color_black= (0, 0, 0) #add file for colors
 color_white = (255, 255, 255)
 
 pygame.init()
+pygame.mixer.init()
 win = pygame.display.set_mode((width, height)) #creates a game window with given size 
 #font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
 
@@ -25,8 +26,9 @@ def main():
                     running = False
                 if event.key == K_SPACE and game.get_status() == 0:
                         game.create_projectile()
+                        game.shoot_audio()
                 if event.key == K_RETURN and game.get_status() == 1:
-                        game.restart(0)
+                        game.restart()
             elif event.type == pygame.QUIT:
                 running = False
         game.update()

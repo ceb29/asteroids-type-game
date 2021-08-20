@@ -30,6 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.move_speed_y = 0
         self.x = 0
         self.y = 0
+        self.thrust_val = 0
 
     def get_center_position(self):
         return self.center_position
@@ -42,6 +43,12 @@ class Player(pygame.sprite.Sprite):
 
     def get_rotation_angle(self):
         return self.rotation_angle
+
+    def get_thrust_val(self):
+        return self.thrust_val
+
+    def set_thrust_val(self, thrust_val):
+        self.thrust_val = thrust_val
 
     def rotate(self, direction):
         if direction == "right":
@@ -78,10 +85,13 @@ class Player(pygame.sprite.Sprite):
             self.surf1 = pygame.image.load(sprite_dict.player_sprites[2]).convert()
             self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
             self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
+            self.thrust_val = 1
+
         else:
             self.surf1 = pygame.image.load(sprite_dict.player_sprites[1]).convert()
             self.surf1 = pygame.transform.rotate(self.surf1, self.rotation_angle)
             self.surf1.set_colorkey((0, 0, 0), RLEACCEL)
+            self.thrust_val = 0
 
     def update_position(self, pressed_key):
         self.x = math.sin(self.rotation_angle*math.pi/180) #get sin value for x term based on rotation angle 

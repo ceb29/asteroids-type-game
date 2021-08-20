@@ -1,3 +1,5 @@
+#need to account for every degree 1-360 (instead of steps of 5)
+
 sin_angle = {
     0: 0.0000,
     5:	0.0872,
