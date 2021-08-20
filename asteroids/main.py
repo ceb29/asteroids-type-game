@@ -2,7 +2,7 @@
 #Asteroid type game made in python using pygame
 import pygame
 import sprite_classes
-from game_classes import Game, width, height
+from game_classes import Asteroids, width, height
 #buttons used in game
 from pygame.constants import K_RETURN, RLEACCEL, K_ESCAPE, KEYDOWN, K_SPACE
 #create window and initialize
@@ -17,7 +17,7 @@ win = pygame.display.set_mode((width, height)) #creates a game window with given
 
 def main():
     running = True    
-    game = Game(30, color_black, win)
+    game = Asteroids(30, color_black, win)
     game.start()
     
     while running:
