@@ -1,23 +1,18 @@
 #need to figure out a way to fix audio pop on throttle with fade
 #Asteroid type game made in python using pygame
 import pygame
-import sprite_classes
-from game_classes import Asteroids, width, height
-#buttons used in game
-from pygame.constants import K_RETURN, RLEACCEL, K_ESCAPE, KEYDOWN, K_SPACE
-#create window and initialize
-color_black= (0, 0, 0) #add file for colors
-color_white = (255, 255, 255)
+from asteroids_class import Asteroids
+from pygame.constants import K_RETURN, K_ESCAPE, KEYDOWN, K_SPACE #buttons used in game
+from constants import *
 
+#initialize and create window
 pygame.init()
 pygame.mixer.init()
-
-win = pygame.display.set_mode((width, height)) #creates a game window with given size 
-#font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
+win = pygame.display.set_mode((WIDTH, HEIGHT)) #creates a game window with given size 
 
 def main():
     running = True    
-    game = Asteroids(30, color_black, win)
+    game = Asteroids(30, COLOR_BLACK, win)
     game.start()
     
     while running:

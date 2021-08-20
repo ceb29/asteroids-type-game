@@ -2,17 +2,15 @@ import pygame
 import math
 import random
 import sprite_dict
+from pygame.constants import RLEACCEL, K_UP, K_LEFT, K_RIGHT
+from constants import COLOR_WHITE, COLOR_BLACK
 #need to account for negative angle
 #just use sin(-x) = -sin(x), cos(-x) = cos (x)
 #import direction_angles 
 #need to make a parent class with rotate and out of bounds
-from pygame.constants import RLEACCEL, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_SPACE
 #
 #need to fix projectile speed to match player
 #
-COLOR_BLACK = (0, 0, 0)
-COLOR_WHITE = (255, 255, 255)
-
 class Player(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height):
         super(Player, self).__init__()

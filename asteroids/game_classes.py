@@ -1,12 +1,7 @@
 import pygame
 import random
 import sprite_classes
-
-PLAYER_SIZE = 25
-color_black= (0, 0, 0) #add file for colors
-color_white = (255, 255, 255)
-width, height = 1820, 980 #need to create file for constants
-
+from constants import *
 
 class Game_Sounds:
     def __init__(self):
@@ -40,8 +35,8 @@ class Game_Text():
         self.win = win
         self.score = 0
         self.high_score = 0
-        self.game_over_width = (width/2) - 100
-        self.game_over_height = (height/2) - 32
+        self.game_over_width = (WIDTH/2) - 100
+        self.game_over_height = (HEIGHT/2) - 32
         self.score_padding = 125 
         self.high_score_padding = 200
         self.score_pad_num = 10
@@ -72,30 +67,30 @@ class Game_Text():
         self.padding()
         if self.score > self.high_score:
             self.high_score = self.score
-        self.text_list[3] = self.font.render(str(self.score), False, color_white)
-        self.text_list[4] = self.font.render(str(self.high_score), False, color_white)
+        self.text_list[3] = self.font.render(str(self.score), False, COLOR_WHITE)
+        self.text_list[4] = self.font.render(str(self.high_score), False, COLOR_WHITE)
         
     def create_text(self):
-        text_score = self.font.render('Score:', False, color_white)
-        text_game_over = self.font.render('Game Over', False, color_white)
-        text_high_score = self.font.render('High Score:', False, color_white)
-        score = self.font.render(str(self.score), False, color_white)
-        high_score = self.font.render(str(self.high_score), False, color_white)
+        text_score = self.font.render('Score:', False, COLOR_WHITE)
+        text_game_over = self.font.render('Game Over', False, COLOR_WHITE)
+        text_high_score = self.font.render('High Score:', False, COLOR_WHITE)
+        score = self.font.render(str(self.score), False, COLOR_WHITE)
+        high_score = self.font.render(str(self.high_score), False, COLOR_WHITE)
         self.text_list = [text_score, text_game_over, text_high_score, score, high_score]  
 
     def update_text(self, game_status):
         if game_status == 0:
             self.update_score()
             self.win.blit(self.text_list[0], (5, 10)) #text_score
-            self.win.blit(self.text_list[2], (0, height - 40))  #text_high_score
+            self.win.blit(self.text_list[2], (0, HEIGHT - 40))  #text_high_score
             self.win.blit(self.text_list[3], (self.score_padding, 10))  #score
-            self.win.blit(self.text_list[4], (self.high_score_padding, height - 40))  #high_score
+            self.win.blit(self.text_list[4], (self.high_score_padding, HEIGHT - 40))  #high_score
         else:
             self.win.blit(self.text_list[0], (5, 10)) #text_score
             self.win.blit(self.text_list[3], (self.score_padding, 10))  #score
             self.win.blit(self.text_list[1], (self.game_over_width, self.game_over_height)) #text_game_over
-            self.win.blit(self.text_list[2], (5, height - 40)) #text_high_score
-            self.win.blit(self.text_list[4], (self.high_score_padding, height - 40))  #high_score
+            self.win.blit(self.text_list[2], (5, HEIGHT - 40)) #text_high_score
+            self.win.blit(self.text_list[4], (self.high_score_padding, HEIGHT - 40))  #high_score
 
 class Game():
     def __init__(self, clock_speed, rgb_tuple, win):
@@ -105,7 +100,7 @@ class Game():
         self.sounds = Game_Sounds()
         #sound_files/asteroids_shoot_t.wav"
         self.sound_files = ["asteroids/sound_files/shoot.wav", "asteroids/sound_files/thrust.wav", "asteroids/sound_files/asteroid.wav"] 
-        self.player1 = sprite_classes.Player(width, height)
+        self.player1 = sprite_classes.Player(WIDTH, HEIGHT)
         self.projects = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.surfaces = pygame.sprite.Group()
@@ -117,6 +112,7 @@ class Game():
     def get_status(self):
         return self.game_status
 
+    #functions for game progression
     def start(self):
         self.create_sounds()
         self.read_high_score()
@@ -128,11 +124,12 @@ class Game():
         self.add_sprites()
 
     def restart(self):
-        self.player1 = sprite_classes.Player(width, height)
+        self.player1 = sprite_classes.Player(WIDTH, HEIGHT)
         self.enemie_count = 5
         self.add_sprites()
         self.game_status = 0
 
+    #draw all surfaces on screen
     def draw_surfaces(self):
         for s in self.surfaces:
             self.win.blit(s.surf1, s.rect)
@@ -159,13 +156,13 @@ class Game():
     
     #functions for creating sprites
     def add_projectile(self):
-        p1 = sprite_classes.Projectile(self.player1.get_center_position(), self.player1.get_x(), self.player1.get_y(), PLAYER_SIZE, width, height, self.player1.get_rotation_angle())
+        p1 = sprite_classes.Projectile(self.player1.get_center_position(), self.player1.get_x(), self.player1.get_y(), PLAYER_SIZE, WIDTH, HEIGHT, self.player1.get_rotation_angle())
         self.surfaces.add(p1)
         self.projects.add(p1)
     
     def add_enemies(self, creation_flag, creation_type, center, num_enemies):
         for i in range(num_enemies):
-            en = sprite_classes.Enemy(width, height, creation_flag, creation_type, center)
+            en = sprite_classes.Enemy(WIDTH, HEIGHT, creation_flag, creation_type, center)
             self.enemies.add(en)
             self.surfaces.add(en)
 
@@ -232,73 +229,3 @@ class Game():
         high_score_file = open('asteroids/high_score.txt', "w")
         high_score_file.write(str(self.text.get_high_score()))
         high_score_file.close()
-
-
-class Asteroids(Game):
-    def __init__(self, clock_speed, rgb_tuple, win):
-        Game.__init__(self,clock_speed, rgb_tuple, win)
-        self.thrust_flag = 0
-    
-    def thrust_on_off(self):
-        if self.player1.get_thrust_val() == 1 and self.thrust_flag == 0:
-            self.thrust_audio()
-            self.thrust_flag = 1
-        elif self.player1.get_thrust_val() == 0 and self.thrust_flag == 1:
-            self.thrust_audio_pause()
-            self.thrust_flag = 0
-
-    def update(self):
-        self.win.fill(self.win_rgb)
-        self.text.update_text(self.game_status)
-        if self.game_status == 0:
-            self.draw_surfaces()
-            self.update_sprite_pos()
-            self.thrust_on_off()
-            self.check_for_collisions()
-        else:
-            self.remove_sprites()
-            self.thrust_audio_pause()
-            self.thrust_flag = 0
-        pygame.display.flip()
-        self.clock.tick(60) 
-
-    def enemy_multiply(self, creation_type, center):
-        if creation_type > 2:
-            num_enemies = 2 #could make random, a certain number for each size, or certain amount of size 
-            self.add_enemies(1, creation_type, center, num_enemies)
-
-    def en_pro_collisions(self):
-        #check for projectile and enemy collision
-        for en in self.enemies:
-            x = pygame.sprite.spritecollideany(en, self.projects)
-            if x != None:
-                x.kill()
-                en.kill()
-                self.enemy_multiply(en.get_creation_type(), en.get_center())
-                self.text.set_score(self.text.get_score() + 1)
-                self.asteroid_audio()
-        if self.game_status == 0: #don't wnat game to go to next level on game over screen
-            self.check_enemies()
-                #return 1
-        #return 0
-
-    def en_plr_collisions(self):
-        #check for player collisions
-        for en in self.enemies:
-            if pygame.sprite.spritecollideany(self.player1, self.enemies, collided=pygame.sprite.collide_mask):
-                self.game_status = 1
-                self.text.set_score(0)
-                self.thrust_flag = 0
-    
-    #functions for audio
-    def shoot_audio(self):
-        self.sounds.play_audio(0)
-    
-    def asteroid_audio(self):
-        self.sounds.play_audio(2)
-
-    def thrust_audio(self):
-        self.sounds.play_audio_loop(1)
-
-    def thrust_audio_pause(self):
-        self.sounds.pause_audio(1)
