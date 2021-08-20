@@ -93,13 +93,12 @@ class Game_Text():
             self.win.blit(self.text_list[4], (self.high_score_padding, HEIGHT - 40))  #high_score
 
 class Game():
-    def __init__(self, clock_speed, rgb_tuple, win):
+    def __init__(self, clock_speed, rgb_tuple, win, sound_file):
         self.win = win
         self.text = Game_Text(win)
         self.game_status = 0
         self.sounds = Game_Sounds()
-        #sound_files/asteroids_shoot_t.wav"
-        self.sound_files = ["asteroids/sound_files/shoot.wav", "asteroids/sound_files/thrust.wav", "asteroids/sound_files/asteroid.wav"] 
+        self.sound_files = sound_file 
         self.player1 = sprite_classes.Player(WIDTH, HEIGHT)
         self.projects = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
@@ -137,7 +136,7 @@ class Game():
     #update all sprite positions if 
     def update_sprite_pos(self):
         pressed_key = pygame.key.get_pressed()
-        self.player1.update_position(pressed_key)
+        self.player1.update(pressed_key)
         self.projects.update()
         self.enemies.update()
 
@@ -156,7 +155,7 @@ class Game():
     
     #functions for creating sprites
     def add_projectile(self):
-        p1 = sprite_classes.Projectile(self.player1.get_center_position(), self.player1.get_x(), self.player1.get_y(), PLAYER_SIZE, WIDTH, HEIGHT, self.player1.get_rotation_angle())
+        p1 = sprite_classes.Projectile(self.player1.get_center(), self.player1.get_x(), self.player1.get_y(), self.player1.get_move_speed_x(), self.player1.get_move_speed_y(), PLAYER_SIZE, WIDTH, HEIGHT, self.player1.get_rotation_angle())
         self.surfaces.add(p1)
         self.projects.add(p1)
     

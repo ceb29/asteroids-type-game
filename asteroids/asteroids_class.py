@@ -2,10 +2,10 @@ import pygame
 from game_classes import Game
 
 class Asteroids(Game):
-    def __init__(self, clock_speed, rgb_tuple, win):
-        Game.__init__(self,clock_speed, rgb_tuple, win)
+    def __init__(self, clock_speed, rgb_tuple, win, sound_files):
+        Game.__init__(self,clock_speed, rgb_tuple, win, sound_files)
         self.thrust_flag = 0
-    
+        
     #main game function
     def update(self):
         self.win.fill(self.win_rgb)
@@ -35,16 +35,15 @@ class Asteroids(Game):
                 self.asteroid_audio()
         if self.game_status == 0: #don't wnat game to go to next level on game over screen
             self.check_enemies()
-                #return 1
-        #return 0
 
     def en_plr_collisions(self):
         #check for enemy and player collision
         for en in self.enemies:
             if pygame.sprite.spritecollideany(self.player1, self.enemies, collided=pygame.sprite.collide_mask):
+                self.game_over_audio()
                 self.game_status = 1
                 self.text.set_score(0)
-                self.thrust_flag = 0
+                self.thrust_flag = 0 
     
     #break asteroid up into smaller asteroids
     def enemy_multiply(self, creation_type, center):
@@ -56,11 +55,14 @@ class Asteroids(Game):
     def shoot_audio(self):
         self.sounds.play_audio(0)
     
+    def thrust_audio(self):
+        self.sounds.play_audio_loop(1)
+
     def asteroid_audio(self):
         self.sounds.play_audio(2)
 
-    def thrust_audio(self):
-        self.sounds.play_audio_loop(1)
+    def game_over_audio(self):
+        self.sounds.play_audio(3)
 
     def thrust_audio_pause(self):
         self.sounds.pause_audio(1)

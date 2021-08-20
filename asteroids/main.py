@@ -11,8 +11,9 @@ pygame.mixer.init()
 win = pygame.display.set_mode((WIDTH, HEIGHT)) #creates a game window with given size 
 
 def main():
-    running = True    
-    game = Asteroids(30, COLOR_BLACK, win)
+    sound_files = ["asteroids/sound_files/shoot.wav", "asteroids/sound_files/thrust.wav", "asteroids/sound_files/asteroid.wav", "asteroids/sound_files/game_over.wav"]
+    running = True
+    game = Asteroids(30, COLOR_BLACK, win, sound_files)
     game.start()
     
     while running:
