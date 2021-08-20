@@ -24,6 +24,7 @@ def main():
         for event in pygame.event.get():
             if event.type == KEYDOWN: #exit game if esc key pressed
                 if event.key == K_ESCAPE: 
+                    game.write_high_score()
                     running = False
                 if event.key == K_SPACE and game.get_status() == 0:
                         game.create_projectile()
@@ -31,6 +32,7 @@ def main():
                 if event.key == K_RETURN and game.get_status() == 1:
                         game.restart()
             elif event.type == pygame.QUIT:
+                game.write_high_score()
                 running = False
         game.update()
     pygame.quit()

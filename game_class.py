@@ -39,7 +39,19 @@ class Game_Text():
         self.high_score_padding = 200
         self.score_pad_num = 10
         self.high_score_pad_num = 10
-        
+    
+    def get_score(self):
+        return self.score
+
+    def get_high_score(self):
+        return self.high_score
+
+    def set_score(self, score):
+        self.score = score
+
+    def set_high_score(self, high_score):
+        self.high_score = high_score
+
     def padding(self):
         if self.score / self.score_pad_num == 1:
             self.score_padding += 10
@@ -101,6 +113,7 @@ class Game():
 
     def start(self):
         self.create_sounds()
+        self.read_high_score()
         self.text.create_text()
         self.add_sprites()
 
@@ -182,7 +195,7 @@ class Game():
                 x.kill()
                 en.kill()
                 self.enemy_multiply(en.get_creation_type(), en.get_center())
-                self.text.score += 1
+                self.text.set_score(self.text.get_score() + 1)
                 self.asteroid_audio()
         if self.game_status == 0: #don't wnat game to go to next level on game over screen
             self.check_enemies()
@@ -194,7 +207,7 @@ class Game():
         for en in self.enemies:
             if pygame.sprite.spritecollideany(self.player1, self.enemies, collided=pygame.sprite.collide_mask):
                 self.game_status = 1
-                self.text.score = 0
+                self.text.set_score(0)
                 self.thrust_flag = 0
                 return 1
         return 0
@@ -231,7 +244,13 @@ class Game():
     def thrust_audio_pause(self):
         self.sounds.pause_audio(1)
 
+    #functions for high score
+    def read_high_score(self):
+        high_score_file = open('high_score.txt', "r")
+        self.text.set_high_score(int(high_score_file.read()))
+        high_score_file.close()
 
-
-
-           
+    def write_high_score(self):
+        high_score_file = open('high_score.txt', "w")
+        high_score_file.write(str(self.text.get_high_score()))
+        high_score_file.close()
