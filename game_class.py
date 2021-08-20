@@ -24,7 +24,6 @@ class Game_Text():
         self.text_list = []
         self.font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
         self.win = win
-        self.game_status = 0
         self.score = 0
         self.high_score = 0
         self.game_over_width = (width/2) - 100
@@ -34,10 +33,6 @@ class Game_Text():
         self.score_pad_num = 10
         self.high_score_pad_num = 10
         
-
-    def get_status(self):
-        return self.game_status
-
     def padding(self):
         if self.score / self.score_pad_num == 1:
             self.score_padding += 10
@@ -62,8 +57,8 @@ class Game_Text():
         high_score = self.font.render(str(self.high_score), False, color_white)
         self.text_list = [text_score, text_game_over, text_high_score, score, high_score]  
 
-    def update_text(self):
-        if self.game_status == 0:
+    def update_text(self, game_status):
+        if game_status == 0:
             self.update_score()
             self.win.blit(self.text_list[0], (5, 10)) #text_score
             self.win.blit(self.text_list[2], (0, height - 40))  #text_high_score
@@ -76,9 +71,11 @@ class Game_Text():
             self.win.blit(self.text_list[2], (5, height - 40)) #text_high_score
             self.win.blit(self.text_list[4], (self.high_score_padding, height - 40))  #high_score
 
-class Game(Game_Text):
+class Game():
     def __init__(self, clock_speed, rgb_tuple, win):
-        Game_Text.__init__(self, win)
+        self.win = win
+        self.text = Game_Text(win)
+        self.game_status = 0
         self.sounds = Game_Sounds()
         self.sound_files = ["sound_files/shoot.wav", "sound_files/thrust.wav"] 
         self.player1 = sprite_classes.Player(width, height)
@@ -91,9 +88,12 @@ class Game(Game_Text):
         self.thrust_flag = 0
         self.level = 2
     
+    def get_status(self):
+        return self.game_status
+
     def start(self):
         self.create_sounds()
-        self.create_text()
+        self.text.create_text()
         self.add_sprites()
 
     def next_level(self):
@@ -129,7 +129,7 @@ class Game(Game_Text):
 
     def update(self):
         self.win.fill(self.win_rgb)
-        self.update_text()
+        self.text.update_text(self.game_status)
         if self.game_status == 0:
             self.draw_surfaces()
             self.update_sprite_pos()
@@ -175,7 +175,7 @@ class Game(Game_Text):
                 x.kill()
                 en.kill()
                 self.enemy_multiply(en.get_creation_type(), en.get_center())
-                self.score += 1
+                self.text.score += 1
         if self.game_status == 0: #don't wnat game to go to next level on game over screen
             self.check_enemies()
                 #return 1
@@ -186,7 +186,7 @@ class Game(Game_Text):
         for en in self.enemies:
             if pygame.sprite.spritecollideany(self.player1, self.enemies, collided=pygame.sprite.collide_mask):
                 self.game_status = 1
-                self.score = 0
+                self.text.score = 0
                 self.thrust_flag = 0
                 return 1
         return 0
