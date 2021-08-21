@@ -2,8 +2,8 @@ import pygame
 from game_classes import Game
 
 class Asteroids(Game):
-    def __init__(self, clock_speed, rgb_tuple, win, sound_files):
-        Game.__init__(self,clock_speed, rgb_tuple, win, sound_files)
+    def __init__(self, clock_speed, rgb_tuple, sound_files):
+        Game.__init__(self,clock_speed, rgb_tuple, sound_files)
         self.thrust_flag = 0
         
     #main game function

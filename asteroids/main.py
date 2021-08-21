@@ -5,15 +5,13 @@ from asteroids_class import Asteroids
 from pygame.constants import K_RETURN, K_ESCAPE, KEYDOWN, K_SPACE #buttons used in game
 from constants import *
 
-#initialize and create window
-pygame.init()
-pygame.mixer.init()
-win = pygame.display.set_mode((WIDTH, HEIGHT)) #creates a game window with given size 
-
 def main():
-    sound_files = ["asteroids/sound_files/shoot.wav", "asteroids/sound_files/thrust.wav", "asteroids/sound_files/asteroid.wav", "asteroids/sound_files/game_over.wav"]
+    pygame.init()
+    pygame.mixer.init()
+    pygame.font.get_fonts()
+    sound_files = ["./sound_files/shoot.wav", "./sound_files/thrust.wav", "./sound_files/asteroid.wav", "./sound_files/game_over.wav"]
     running = True
-    game = Asteroids(30, COLOR_BLACK, win, sound_files)
+    game = Asteroids(30, COLOR_BLACK, sound_files)
     game.start()
     
     while running:

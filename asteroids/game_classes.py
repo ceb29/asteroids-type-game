@@ -31,7 +31,7 @@ class Game_Sounds:
 class Game_Text():
     def __init__(self, win):
         self.text_list = []
-        self.font = pygame.font.Font('freesansbold.ttf', 32) #font used for all text
+        self.font = pygame.font.Font("freesansbold.ttf", 32) #font used for all text
         self.win = win
         self.score = 0
         self.high_score = 0
@@ -93,9 +93,9 @@ class Game_Text():
             self.win.blit(self.text_list[4], (self.high_score_padding, HEIGHT - 40))  #high_score
 
 class Game():
-    def __init__(self, clock_speed, rgb_tuple, win, sound_file):
-        self.win = win
-        self.text = Game_Text(win)
+    def __init__(self, clock_speed, rgb_tuple, sound_file):
+        self.win = pygame.display.set_mode((WIDTH, HEIGHT)) #creates a game window with given size 
+        self.text = Game_Text(self.win)
         self.game_status = 0
         self.sounds = Game_Sounds()
         self.sound_files = sound_file 
@@ -189,7 +189,6 @@ class Game():
             if x != None:
                 x.kill()
                 en.kill()
-                self.enemy_multiply(en.get_creation_type(), en.get_center())
                 self.text.set_score(self.text.get_score() + 1)
         if self.game_status == 0: #don't wnat game to go to next level on game over screen
             self.check_enemies()
@@ -220,11 +219,11 @@ class Game():
     
     #functions for high score
     def read_high_score(self):
-        high_score_file = open('asteroids/high_score.txt', "r")
+        high_score_file = open('./high_score.txt', "r")
         self.text.set_high_score(int(high_score_file.read()))
         high_score_file.close()
 
     def write_high_score(self):
-        high_score_file = open('asteroids/high_score.txt', "w")
+        high_score_file = open('./high_score.txt', "w")
         high_score_file.write(str(self.text.get_high_score()))
         high_score_file.close()
